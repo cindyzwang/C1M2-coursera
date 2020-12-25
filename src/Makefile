@@ -36,11 +36,11 @@ SPECS = nosys.specs
 CC = arm-none-eabi-gcc
 LD = arm-none-eabi-ld
 LDFLAGS = -Wl,-Map=$(PLATFORM).map -T $(LINKER_FILE)
-CFLAGS = -mcpu=$(CPU) -m$(ARCH) --specs=$(SPECS) -Wall
+CFLAGS = -mcpu=$(CPU) -m$(ARCH) --specs=$(SPECS) -Wall -I $(INCLUDES)
 CPPFLAGs = -mcpu=$(CPU) -m$(ARCH) --specs=$(SPECS) -Wall
 
 TARGET = main
-OBJS = $(SRCS:.c=.o)
+OBJS = $(SOURCES:.c=.o)
 
 %.o : %.c
 	$(CC) -c $< $(CFLAGS) -o $@
