@@ -60,7 +60,7 @@ compile-all:
 
 .PHONY: build
 build:
-	$(foreach var, $(SOURCES), $(CC) $(CFLAGS) $(CPPFLAGS) -o $(var:.c=.out) $(var);)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o c1m2.out $(SOURCES)
 
 .PHONY: clean
 clean:
