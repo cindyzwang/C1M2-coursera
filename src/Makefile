@@ -52,7 +52,7 @@ TARGET = main
 	$(CC) $(CPPFLAGS) -S -o $@ $<
 
 %.o: %.i
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 .PHONY: compile-all
 compile-all:
