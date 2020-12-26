@@ -24,26 +24,26 @@
 include sources.mk
 
 # Platform Overrides
-PLATFORM = $(PLATFORM)
+PLATFORM := $(PLATFORM)
 
 # Architectures Specific Flags
 LINKER_FILE = ../msp432p401r.lds
-CPU = cortex-m0plus
+CPU = cortex-m4
 ARCH = thumb
 SPECS = nosys.specs
 
 # Compiler Flags and Defines
 ifeq ($(PLATFORM), HOST)
 	CC = gcc
+	INCLUDES := $(firstword $(INCLUDES))
 else
 	CC = arm-none-eabi-ld
 endif
 LDFLAGS = -Wl,-Map=$(PLATFORM).map -T $(LINKER_FILE)  # Linker flags
-# C-programming flags for gcc
-CFLAGS = -std=c99
+CFLAGS = -std=c99  # C-programming flags for gcc
 CPPFLAGS = -I $(INCLUDES) -D$(PLATFORM) # C-Preprocessor flags
 
-TARGET = main
+OUTPUT = c1m2.out
 
 %.i: %.c
 	$(CC) $(CPPFLAGS) -E -o $@ $<
@@ -60,9 +60,8 @@ compile-all:
 
 .PHONY: build
 build:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -o c1m2.out $(SOURCES)
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(output) $(SOURCES)
 
 .PHONY: clean
 clean:
-	rm -f $(SOURCES:.c=.o) $(SOURCES:.c=.i) $(SOURCES:.c=.asm) $(SOURCES:.c=.out)
-
+	rm -f $(SOURCES:.c=.o) $(SOURCES:.c=.i) $(SOURCES:.c=.asm) $(SOURCES:.c=.out) $(OUTPUT)
