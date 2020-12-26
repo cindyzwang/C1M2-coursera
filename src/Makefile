@@ -51,16 +51,16 @@ TARGET = main
 %.asm: %.c
 	$(CC) $(CPPFLAGS) -S -o $@ $<
 
-%.o: %.i
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 .PHONY: compile-all
 compile-all:
-	$(foreach var, $(SOURCES), $(CC) -c $(CPPFLAGS) -o $(var:.c=.out) $(var);)
+	$(foreach var, $(SOURCES), $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $(var:.c=.out) $(var);)
 
 .PHONY: build
 build:
-	$(foreach var, $(SOURCES), $(CC) $(CPPFLAGS) -o $(var:.c=.out) $(var);)
+	$(foreach var, $(SOURCES), $(CC) $(CFLAGS) $(CPPFLAGS) -o $(var:.c=.out) $(var);)
 
 .PHONY: clean
 clean:
