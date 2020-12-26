@@ -33,27 +33,36 @@ ARCH = thumb
 SPECS = nosys.specs
 
 # Compiler Flags and Defines
-CC = arm-none-eabi-gcc
-LD = arm-none-eabi-ld
-LDFLAGS = -Wl,-Map=$(PLATFORM).map -T $(LINKER_FILE)
-CFLAGS = -mcpu=$(CPU) -m$(ARCH) --specs=$(SPECS) -Wall -I $(INCLUDES)
-CPPFLAGs = -mcpu=$(CPU) -m$(ARCH) --specs=$(SPECS) -Wall
+ifeq ($(PLATFORM), HOST)
+	CC = gcc
+else
+	CC = arm-none-eabi-ld
+endif
+LDFLAGS = -Wl,-Map=$(PLATFORM).map -T $(LINKER_FILE)  # Linker flags
+# C-programming flags for gcc
+CFLAGS = -std=c99
+CPPFLAGS = -I $(INCLUDES) -D$(PLATFORM) # C-Preprocessor flags
 
 TARGET = main
-OBJS = $(SOURCES:.c=.o)
 
-%.o : %.c
-	$(CC) -c $< $(CFLAGS) -o $@
+%.i: %.c
+	$(CC) $(CPPFLAGS) -E -o $@ $<
+
+%.asm: %.c
+	$(CC) $(CPPFLAGS) -S -o $@ $<
+
+%.o: %.i
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+
+.PHONY: compile-all
+compile-all:
+	$(foreach var, $(SOURCES), $(CC) -c $(CPPFLAGS) -o $(var:.c=.out) $(var);)
 
 .PHONY: build
-build: all
-
-.PHONY: all
-all: $(TARGET).out
-
-$(TARGET).out: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) -o $@
+build:
+	$(foreach var, $(SOURCES), $(CC) $(CPPFLAGS) -o $(var:.c=.out) $(var);)
 
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(TARGET).out $(TARGET).map
+	rm -f $(SOURCES:.c=.o) $(SOURCES:.c=.i) $(SOURCES:.c=.asm) $(SOURCES:.c=.out)
+
