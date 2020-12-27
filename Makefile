@@ -40,7 +40,7 @@ else
 	CC = arm-none-eabi-ld
 endif
 LDFLAGS = -Wl,-Map=$(PLATFORM).map -T $(LINKER_FILE)  # Linker flags
-CFLAGS = -std=c99  # C-programming flags for gcc
+CFLAGS = -std=c99  -g # Compiler flags
 CPPFLAGS = -I $(INCLUDES) -D$(PLATFORM) # C-Preprocessor flags
 
 OUTPUT = c1m2.out
@@ -51,7 +51,7 @@ OUTPUT = c1m2.out
 %.asm: %.c
 	$(CC) $(CPPFLAGS) -S -o $@ $<
 
-%.o: %.c
+%.o: %.c %.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 .PHONY: compile-all
@@ -60,7 +60,7 @@ compile-all:
 
 .PHONY: build
 build:
-	$(CC) $(CFLAGS) $(CPPFLAGS)-o $(OUTPUT) $(SOURCES) 
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(OUTPUT) $(SOURCES) 
 
 .PHONY: clean
 clean:
