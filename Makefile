@@ -60,8 +60,12 @@ CPPFLAGS = -std=c99 -D$(PLATFORM) -I $(INCLUDES) # C-Preprocessor flags
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
 # Dependencies
-%.d: %.o
-	$(CC) -M $< > $@
+# Taken from GNU Manual https://www.gnu.org/software/make/manual/make.html#Pattern-Examples
+%.d: %.c
+	@set -e; rm -f $@; \
+		$(CC) -M $(CPPFLAGS) $< > $@.$$$$; \
+		sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
+		rm -f $@.$$$$
 
 # Compile all object files but do not link
 .PHONY: compile-all
