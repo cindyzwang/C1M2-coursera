@@ -74,7 +74,7 @@ compile-all: $(SOURCES:.c=.d) $(SOURCES:.c=.o)
 # Compile all object files and link into a final executable
 .PHONY: link
 link:
-	$(CC) $(LDFLAGS)
+	$(CC) $(LDFLAGS) -o $(TARGET).out $(SOURCES:.c=.o)
 
 .PHONY: build
 build: compile-all link $(SOURCES:.c=.o)
