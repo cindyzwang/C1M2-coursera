@@ -35,13 +35,13 @@ ARCH = thumb
 SPECS = nosys.specs
 
 # Compiler Flags and Defines
+LDFLAGS = -Wl,-Map=$(TARGET).map
 ifeq ($(PLATFORM), HOST)
 	INCLUDES := $(firstword $(INCLUDES))
 	CC = gcc
-	LDFLAGS = -Wl,-Map=$(TARGET).map
 else
 	CC = arm-none-eabi-gcc
-	LDFLAGS = -Xlinker -T=$(LINKER_FILE)
+	LDFLAGS += -T=$(LINKER_FILE)
 endif
 
 CFLAGS = -g -Wall # Compiler flags
