@@ -23,11 +23,13 @@
 #------------------------------------------------------------------------------
 include sources.mk
 
+TARGET = c1m2
+
 # Platform Overrides
 PLATFORM := $(PLATFORM)
 
 # Architectures Specific Flags
-LINKER_FILE = ../msp432p401r.lds
+LINKER_FILE = msp432p401r.lds
 CPU = cortex-m4
 ARCH = thumb
 SPECS = nosys.specs
@@ -39,11 +41,9 @@ ifeq ($(PLATFORM), HOST)
 else
 	CC = arm-none-eabi-gcc
 endif
-LDFLAGS = -Wl,-Map=$(PLATFORM).map -T $(LINKER_FILE)  # Linker flags
+LDFLAGS = -Map $(TARGET).map -T $(LINKER_FILE)  # Linker flags
 CFLAGS = -g -Wall # Compiler flags
 CPPFLAGS = -std=c99 -D$(PLATFORM) -I $(INCLUDES) # C-Preprocessor flags
-
-TARGET = c1m2
 
 # Preprocess
 %.i: %.c
@@ -63,12 +63,12 @@ TARGET = c1m2
 
 # Compile all object files but do not link
 .PHONY: compile-all
-compile-all: $(SOURCES:.c=.o)
+compile-all: $(SOURCES:.c=.d)
 
 # Compile all object files and link into a final executable
 .PHONY: build
-build: $(SOURCES:.c=.o)
-	$(CC) -g -o $(TARGET).exe $(SOURCES:.c=.o)
+build: compile-all $(SOURCES:.c=.o)
+	$(CC) -o $(TARGET).exe $(SOURCES:.c=.o)
 
 .PHONY: clean
 clean:
