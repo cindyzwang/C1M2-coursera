@@ -69,7 +69,7 @@ CPPFLAGS = -std=c99 -D$(PLATFORM) -I $(INCLUDES) # C-Preprocessor flags
 
 # Compile all object files but do not link
 .PHONY: compile-all
-compile-all: $(SOURCES:.c=.d)
+compile-all: $(SOURCES:.c=.d) $(SOURCES:.c=.o)
 
 # Compile all object files and link into a final executable
 .PHONY: link
@@ -82,4 +82,4 @@ build: compile-all link $(SOURCES:.c=.o)
 
 .PHONY: clean
 clean:
-	rm -f $(SOURCES:.c=.o) $(SOURCES:.c=.i) $(SOURCES:.c=.asm) $(SOURCES:.c=.out) $(SOURCES:.c=.d) $(TARGET).out $(TARGET).exe
+	rm -f $(SOURCES:.c=.o) $(SOURCES:.c=.i) $(SOURCES:.c=.asm) $(SOURCES:.c=.out) $(SOURCES:.c=.d) $(TARGET).out $(TARGET).map
