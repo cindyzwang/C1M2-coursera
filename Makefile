@@ -84,6 +84,7 @@ link:
 
 .PHONY: build
 build: compile-all link $(SOURCES:.c=.o)
+	size $(TARGET).out
 
 .PHONY: clean
 clean:
