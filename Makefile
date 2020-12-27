@@ -37,7 +37,7 @@ ifeq ($(PLATFORM), HOST)
 	CC = gcc
 	INCLUDES := $(firstword $(INCLUDES))
 else
-	CC = arm-none-eabi-ld
+	CC = arm-none-eabi-gcc
 endif
 LDFLAGS = -Wl,-Map=$(PLATFORM).map -T $(LINKER_FILE)  # Linker flags
 CFLAGS = -g -Wall # Compiler flags
