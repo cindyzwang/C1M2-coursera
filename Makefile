@@ -40,28 +40,36 @@ else
 	CC = arm-none-eabi-ld
 endif
 LDFLAGS = -Wl,-Map=$(PLATFORM).map -T $(LINKER_FILE)  # Linker flags
-CFLAGS = -std=c99  -g # Compiler flags
-CPPFLAGS = -I $(INCLUDES) -D$(PLATFORM) # C-Preprocessor flags
+CFLAGS = -g -Wall # Compiler flags
+CPPFLAGS = -std=c99 -D$(PLATFORM) -I $(INCLUDES) # C-Preprocessor flags
 
-OUTPUT = c1m2.out
+TARGET = c1m2
 
+# Preprocess
 %.i: %.c
 	$(CC) $(CPPFLAGS) -E -o $@ $<
 
-%.asm: %.c
-	$(CC) $(CPPFLAGS) -S -o $@ $<
+# Compile
+%.asm: %.i
+	$(CC) $(CFLAGS) -S -o $@ $<
 
+# Assemble
 %.o: %.c %.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
-.PHONY: compile-all
-compile-all:
-	$(foreach var, $(SOURCES), $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $(var:.c=.out) $(var);)
+# Link
+%.d: %.o
+	$(CC) -M $(CPPFLAGS) $< > $@
 
+# Compile all object files but do not link
+.PHONY: compile-all
+compile-all: $(SOURCES:.c=.o)
+
+# Compile all object files and link into a final executable
 .PHONY: build
-build:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(OUTPUT) $(SOURCES) 
+build: $(SOURCES:.c=.o)
+	$(CC) -g -o $(TARGET).exe $(SOURCES:.c=.o)
 
 .PHONY: clean
 clean:
-	rm -f $(SOURCES:.c=.o) $(SOURCES:.c=.i) $(SOURCES:.c=.asm) $(SOURCES:.c=.out) $(OUTPUT)
+	rm -f $(SOURCES:.c=.o) $(SOURCES:.c=.i) $(SOURCES:.c=.asm) $(SOURCES:.c=.out) $(SOURCES:.c=.d) $(TARGET).out $(TARGET).exe
