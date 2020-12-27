@@ -59,17 +59,21 @@ CPPFLAGS = -std=c99 -D$(PLATFORM) -I $(INCLUDES) # C-Preprocessor flags
 %.o: %.c %.h
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
 
-# Link
+# Dependencies
 %.d: %.o
-	$(CC) -M $(LDFLAGS) $< > $@
+	$(CC) -M $< > $@
 
 # Compile all object files but do not link
 .PHONY: compile-all
 compile-all: $(SOURCES:.c=.d)
 
 # Compile all object files and link into a final executable
+.PHONY: link
+link:
+	$(CC) $(LDFLAGS)
+
 .PHONY: build
-build: compile-all $(SOURCES:.c=.o)
+build: compile-all link $(SOURCES:.c=.o)
 	$(CC) -o $(TARGET).exe $(SOURCES:.c=.o)
 
 .PHONY: clean
