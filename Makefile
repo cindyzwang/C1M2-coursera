@@ -60,7 +60,7 @@ compile-all:
 
 .PHONY: build
 build:
-	$(CC) $(CFLAGS) $(CPPFLAGS) -o $(output) $(SOURCES)
+	$(CC) $(CFLAGS) $(CPPFLAGS)-o $(OUTPUT) $(SOURCES) 
 
 .PHONY: clean
 clean:
