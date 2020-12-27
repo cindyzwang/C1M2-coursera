@@ -31,8 +31,11 @@ PLATFORM := $(PLATFORM)
 # Architectures Specific Flags
 LINKER_FILE = msp432p401r.lds
 CPU = cortex-m4
-ARCH = thumb
+INSTRUCTIONS = thumb
+ARCH = armv7e-m
 SPECS = nosys.specs
+FLOAT = hard
+FPU = fpv4-sp-d16
 
 # Compiler Flags and Defines
 LDFLAGS = -Wl,-Map=$(TARGET).map
@@ -44,8 +47,8 @@ ifeq ($(PLATFORM), HOST)
 else
 	INCLUDES := $(foreach inc, $(INCLUDES), -I $(inc))
 	CC = arm-none-eabi-gcc
-	LDFLAGS += -T=$(LINKER_FILE)
-	CFLAGS += -mcpu=$(CPU) -m$(ARCH) --specs=$(SPECS)
+	LDFLAGS += -T$(LINKER_FILE)
+	CFLAGS += -mcpu=$(CPU) -m$(INSTRUCTIONS) --specs=$(SPECS) -march=$(ARCH) -mfloat-abi=$(FLOAT) -mfpu=$(FPU)
 endif
 CPPFLAGS = -std=c99 -D$(PLATFORM) $(INCLUDES) -Werror # C-Preprocessor flags
 
@@ -77,7 +80,7 @@ compile-all: $(SOURCES:.c=.d) $(SOURCES:.c=.o)
 # Compile all object files and link into a final executable
 .PHONY: link
 link:
-	$(CC) $(LDFLAGS) -o $(TARGET).out $(SOURCES:.c=.o)
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $(TARGET).out $(SOURCES:.c=.o)
 
 .PHONY: build
 build: compile-all link $(SOURCES:.c=.o)
