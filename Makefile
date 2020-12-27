@@ -36,16 +36,19 @@ SPECS = nosys.specs
 
 # Compiler Flags and Defines
 LDFLAGS = -Wl,-Map=$(TARGET).map
+CFLAGS = -g -Wall # Compiler flags
+
 ifeq ($(PLATFORM), HOST)
-	INCLUDES := $(firstword $(INCLUDES))
+	INCLUDES := -I $(firstword $(INCLUDES))
 	CC = gcc
 else
+	INCLUDES := $(foreach inc, $(INCLUDES), -I $(inc))
 	CC = arm-none-eabi-gcc
 	LDFLAGS += -T=$(LINKER_FILE)
+	CFLAGS += -mcpu=$(CPU) -m$(ARCH) --specs=$(SPECS)
 endif
+CPPFLAGS = -std=c99 -D$(PLATFORM) $(INCLUDES) -Werror # C-Preprocessor flags
 
-CFLAGS = -g -Wall # Compiler flags
-CPPFLAGS = -std=c99 -D$(PLATFORM) -I $(INCLUDES) # C-Preprocessor flags
 
 # Preprocess
 %.i: %.c
