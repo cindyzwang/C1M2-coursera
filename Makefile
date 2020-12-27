@@ -36,12 +36,14 @@ SPECS = nosys.specs
 
 # Compiler Flags and Defines
 ifeq ($(PLATFORM), HOST)
-	CC = gcc
 	INCLUDES := $(firstword $(INCLUDES))
+	CC = gcc
+	LDFLAGS = -Wl,-Map=$(TARGET).map
 else
 	CC = arm-none-eabi-gcc
+	LDFLAGS = -Xlinker -T=$(LINKER_FILE)
 endif
-LDFLAGS = -Map $(TARGET).map -T $(LINKER_FILE)  # Linker flags
+
 CFLAGS = -g -Wall # Compiler flags
 CPPFLAGS = -std=c99 -D$(PLATFORM) -I $(INCLUDES) # C-Preprocessor flags
 
@@ -59,7 +61,7 @@ CPPFLAGS = -std=c99 -D$(PLATFORM) -I $(INCLUDES) # C-Preprocessor flags
 
 # Link
 %.d: %.o
-	$(CC) -M $(CPPFLAGS) $< > $@
+	$(CC) -M $(LDFLAGS) $< > $@
 
 # Compile all object files but do not link
 .PHONY: compile-all
